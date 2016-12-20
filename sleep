@@ -4,33 +4,42 @@
 # Dependencies - curl
 # Summary - Shuts down a computer if certain criteria are met:-
   # no declared clients present
+  # no declared Sony TVs present
   # no declared processes present
   # no declared users present
   # no tvheadend activity taking place (recording, streaming etc.)
   # no upcoming recording (within a specified margin)
 
-## Change the follwing settings as required ##
+# ================= START OF BASIC SETTINGS =================
+# Set basic settings as required
 
 # set debug mode
-debug=0
+debug=1
 
 # which actions to take
 do_client=1
+do_tv_sony=1
 do_process=1
 do_user=1
 do_tvheadend=1
 do_wakeup=1
 
 # credentials
-tvh_login='tvheadend_username'
-tvh_password='tvheadend_password'
-
-trans_password='transmission_password'
+tvh_login='tvheadend'
+tvh_password='w9e3s7t8'
+trans_password='w9e3s7t8'
+tv_sony_auth_psk='sony'
 
 # declare clients that, if online, prevent the server from shutting down
 macClient=()
-macClient+=('MY:SE:RV:ER:MA:C1') #computer1
-macClient+=('MY:SE:RV:ER:MA:C2') #computer2
+macClient+=('my:cl:ie:nt:ma:c1') #computer1
+macClient+=('my:cl:ie:nt:ma:c2') #computer2
+# add more as required...
+
+# declare Sony TVs that, if active, prevent the server from shutting down
+macTV=()
+macTV+=('my:so:ny:tv:ma:c1') #sonytv1
+macTV+=('my:so:ny:tv:ma:c2') #sonytv2
 # add more as required...
 
 # declare processes that, if running, prevent server from shutting down
@@ -49,9 +58,10 @@ safe_margin_startup=180
 # maximum time in hours not to wake up for updating EPG
 epg_hours=48
 
-## Not recommended to change anything below this line ##
+# ================= END OF BASIC SETTINGS =================
 
 total_client=0
+total_tv_sony=0
 total_process=0
 total_user=0
 total_tvheadend=0
@@ -87,6 +97,23 @@ if [ $do_client -eq 1 ]; then
       total_client=$((total_client+counter))
     fi;
   done        
+
+fi
+
+if [ $do_tv_sony -eq 1 ]; then
+
+  # check for active Sony TVs
+  for mac in "${macTV[@]}"
+  do
+    ip=$(arp -n | grep $mac | awk ' { print $1 } ')
+      
+    j=$(curl -s -X POST -H "Content-Type: application/json" -H "X-Auth-PSK: $tv_sony_auth_psk" -d '{"id":3,"method":"getPowerStatus","version":"1.0","params":[]}' http://$ip/sony/system | grep '"active"' | wc -l)
+      
+    if [ $j -eq 1 ]; then
+      total_tv_sony=$((total_tv_sony+1))
+    fi;
+    
+  done
 
 fi
 
@@ -152,6 +179,13 @@ if [ $total_client -ne 0 ]; then
     echo "No clients detected" 
 fi 
 
+# about Sony TVs
+if [ $total_tv_sony -ne 0 ]; then
+    echo "Active Sony TVs detected ($total_tv_sony)" 
+  else
+    echo "No Sony TVs detected" 
+fi 
+
 # about users
 if [ $total_user -ne 0 ]; then
     echo "Active users detected ($total_user)"  
@@ -196,7 +230,7 @@ fi
   # no tvheadend activity taking place (recording, streaming etc.)
   # no upcoming recording (within a specified margin)
 
-if [ $total_tvheadend -eq 0 -a $total_process -eq 0 -a $total_client -eq 0 -a $total_user -eq 0 -a $will_record_soon -eq 0 ]; then
+if [ $total_tvheadend -eq 0 -a $total_process -eq 0 -a $total_client -eq 0 -a $total_tv_sony -eq 0 -a $total_user -eq 0 -a $will_record_soon -eq 0 ]; then
     echo "Do shutdown in 10 seconds"
     
     if [[ debug -eq 0 ]]; then
