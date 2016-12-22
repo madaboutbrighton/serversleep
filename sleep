@@ -26,9 +26,9 @@ do_wakeup=1
 
 # credentials
 tvh_login='tvheadend'
-tvh_password='w9e3s7t8'
-trans_password='w9e3s7t8'
-tv_sony_auth_psk='sony'
+tvh_password='tvheadend_password'
+trans_password='transmission_password'
+tv_sony_auth_psk='sony_tv_auth_pre_shared_key'
 
 # declare clients that, if online, prevent the server from shutting down
 macClient=()
@@ -59,6 +59,7 @@ safe_margin_startup=180
 epg_hours=48
 
 # ================= END OF BASIC SETTINGS =================
+# Do not change anything below this line
 
 total_client=0
 total_tv_sony=0
@@ -225,6 +226,7 @@ fi
 
 # final check will result in shutdown if
   # no declared clients present
+  # no declared Sony TVs present
   # no declared processes present
   # no declared users present
   # no tvheadend activity taking place (recording, streaming etc.)
