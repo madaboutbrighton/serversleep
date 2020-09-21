@@ -43,7 +43,7 @@ torrent_user=""
 torrent_password=""
 # TV Tuner software settings
 tv_tuner_type=""
-tv_tuner_login=""
+tv_tuner_user=""
 tv_tuner_password=""
 # Maximum time in hours not to wake up for updating EPG
 tv_tuner_epg_hours=48
@@ -53,8 +53,7 @@ notify=""
 #######################################
 # Sets the commandline arguments as global variables.
 # Globals:
-#   is_dry_run, is_recursive, is_verbose, is_move, 
-#   path_source, path_dest, notify
+#   is_dry_run, is_verbose, clients, etc...
 # Arguments:
 #   The commandline arguments, a string.
 # Example:
@@ -101,8 +100,8 @@ get_options() {
           tv-tuner-type)
             tv_tuner_type="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
             ;;
-          tv-tuner-login)
-            tv_tuner_login="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+          tv-tuner-user)
+            tv_tuner_user="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
             ;;
           tv-tuner-password)
             tv_tuner_password="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
@@ -151,7 +150,7 @@ get_options() {
     message "torrent_level=${torrent_level}"
     message "[TV TUNER]"
     message "tv_tuner_type=${tv_tuner_type}"
-    message "tv_tuner_login=${tv_tuner_login}"
+    message "tv_tuner_user=${tv_tuner_user}"
     message "tv_tuner_password=${tv_tuner_password}"
     message "tv_tuner_epg_hours=${tv_tuner_epg_hours}\n"
   fi
