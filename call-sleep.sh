@@ -5,7 +5,7 @@
 #
 # Location:     /etc/cron.hourly/call-sleep
 #
-# Description:  Calls serversleep, to initiate a shutdown if certain criteria are met.
+# Description:  Calls sleep.sh, to initiate a shutdown if certain criteria are met.
 #
 # Usage:        Run automatically from a cron directory.
 #

@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #------------------------------------------------------------------------------
-# File:         serversleep
+# File:         sleep
 #
-# Location:     /usr/local/bin/serversleep
+# Location:     /usr/local/bin/sleep.sh
 #
 # Description:  Shuts down a computer if certain criteria are met:-
 #                 - None of the listed clients are active.
@@ -13,7 +13,7 @@
 #                 - No torrents are active, such as downloading or seeding.
 #                 - No TV tuner is active, such as recording or streaming.
 #
-# Usage:        serversleep -v --clients "192.168.1.15" --processes "cp mv"
+# Usage:        sleep -v --clients "192.168.1.15" --processes "cp mv"
 #
 # Requires:     cURL
 #
