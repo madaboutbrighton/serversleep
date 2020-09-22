@@ -9,7 +9,7 @@
 #                 - None of the listed clients are active.
 #                 - None of the listed processes are active.
 #                 - None of the listed Sony TVs are active.
-#                 - No users logged-on.
+#                 - No users are logged-on.
 #                 - No torrents are active, such as downloading or seeding.
 #                 - No TV tuner is active, such as recording or streaming.
 #
@@ -25,27 +25,27 @@
 # Default options.
 is_dry_run=0
 is_verbose=0
-# Minimum time in seconds needed to start up the computer properly.
+# Minimum time in seconds needed to start-up the computer properly.
 safe_margin_startup=180
-# Minimum time in seconds needed for consecutive shutdown AND startup.
-safe_margin_shutdown=600
+# Minimum time in seconds needed to shutdown the computer properly.
+safe_margin_shutdown=300
 # RTC folder, for setting an alarm to wake the computer.
 rtc_folder="/sys/class/rtc/rtc0"
 clients=""
 processes="cp mv rsync scp"
-# Sony TV settings
+# Sony TV settings.
 sony_tvs=""
 sony_tv_auth_psk=""
-# Torrent software settings
+# Torrent software settings.
 torrent_type=""
 torrent_level=""
 torrent_user=""
 torrent_password=""
-# TV Tuner software settings
+# TV Tuner software settings.
 tv_tuner_type=""
 tv_tuner_user=""
 tv_tuner_password=""
-# Maximum time in hours not to wake up for updating EPG
+# Maximum time in hours not to wake up for updating EPG.
 tv_tuner_epg_hours=48
 
 notify=""
@@ -525,7 +525,7 @@ check_torrents() {
 # Returns:
 #   Whether there is current activity, an integer. 
 # Example:
-#   check_tv_tuner "tvheadend" "my_username" "my_password" 180 600
+#   check_tv_tuner "tvheadend" "my_username" "my_password" 180 300
 #######################################
 check_tv_tuner() {
   local -r TUNER_TYPE="${1}"
@@ -533,6 +533,7 @@ check_tv_tuner() {
   local -r TUNER_PASSWORD="${3}"
   local -r SAFE_MARGIN_STARTUP="${4}"
   local -r SAFE_MARGIN_SHUTDOWN="${5}"
+  local -r SAFE_MARGIN_REBOOT=$((SAFE_MARGIN_STARTUP+SAFE_MARGIN_SHUTDOWN))
   local -r EPG_HOURS="${6}"
   local -r RTC_FOLDER="${7}"
   local text=""
@@ -576,7 +577,7 @@ check_tv_tuner() {
       local wake_after_secs=$((wake_after_min*60))
 
       # Check safe margin shutdown.
-      if [[ $SAFE_MARGIN_SHUTDOWN -gt $wake_after_secs ]]; then
+      if [[ $SAFE_MARGIN_REBOOT -gt $wake_after_secs ]]; then
         # Future event is going to happen before the computer could safely shutdown.
         is_active=1
       fi
@@ -647,7 +648,6 @@ main() {
 
   if [ "${do_shutdown}" -eq 1 ]; then
     message "I'm really shutting down now!!!!"
-    
     sleep 10s
     sudo shutdown -h now
   fi

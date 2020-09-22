@@ -4,7 +4,7 @@ Bash script to shutdown a computer if certain criteria are met:-
   - None of the listed clients are active.
   - None of the listed processes are active.
   - None of the listed Sony TVs are active.
-  - No users logged-on.
+  - No users are logged-on.
   - No torrents are active, such as downloading or seeding.
   - No TV tuner is active, such as recording or streaming.
 
@@ -28,7 +28,7 @@ This would shutdown a computer if `transmission` is not actively downloading any
 ```bash
 sleep.sh --sony-tvs "192.168.1.67 192.168.1.89" --sony-tv-auth-psk "my_sony_psk"
 ```
-This would shutdown a computer if the Sony Tv's `192.168.1.67` and `192.168.1.89` are not active, no users are logged-on, and no `cp`, `mv`, `rsync` or `scp` processses are running. 
+This would shutdown a computer if the Sony TVs `192.168.1.67` and `192.168.1.89` are not active, no users are logged-on, and no `cp`, `mv`, `rsync` or `scp` processses are running. 
 
 ## Options
 
@@ -50,7 +50,7 @@ Location of wake-up alarm. If a TV tuner is detected, and a future recording dat
 
 #### Safe margin shutdown `--safe-margin-shutdown `
 
-Minimum time in seconds needed for consecutive shutdown AND startup. Default value is `600`.
+Minimum time in seconds needed to shutdown the computer properly. Default value is `300`.
 
 #### Safe margin start-up `--safe-margin-startup `
 
@@ -96,7 +96,7 @@ The password for the specified TV tuner.
 
 #### TV tuner EPG hours `--tv-tuner-epg-hours `
 
-Maximum time in hours not to wake up for updating EPG.
+Maximum time in hours not to wake-up for updating EPG. Default value is `48`.
 
 #### Verbose `-v `
 
