@@ -27,17 +27,17 @@ sudo chmod a+rx /usr/local/bin/sleep.sh
 
 ### Calling script
 
-Download `call-sleep.sh` into `/etc/cron.hourly` so that it can be run automatically every hour:-
+Download `call-sleep` into `/etc/cron.hourly` so that it can be run automatically every hour:-
 
 ```bash
-sudo wget https://raw.githubusercontent.com/madaboutbrighton/sleep/master/call-sleep.sh -O /etc/cron.hourly/call-sleep.sh
-sudo chmod u=rwx /etc/cron.hourly/call-sleep.sh
+sudo wget https://raw.githubusercontent.com/madaboutbrighton/sleep/master/call-sleep -O /etc/cron.hourly/call-sleep
+sudo chmod u=rwx,og-rwx /etc/cron.hourly/call-sleep
 ```
 
-You can then customise `call-sleep.sh` based on your own options:
+You can then customise `call-sleep` based upon your own options:
 
 ```bash
-sudo nano /etc/cron.hourly/call-sleep.sh
+sudo nano /etc/cron.hourly/call-sleep
 ```
 
 ## Usage
