@@ -136,7 +136,7 @@ Increase the amount of information printed to the terminal.
 
 ## FAQ
 
-### Who do i need the `call-sleep` script as well as `sleep.sh`?
+### Why do I need the `call-sleep` script as well as `sleep.sh`?
 
 You can call `sleep.sh` directly from the command-line. However, it is highly likely that you would want to call `sleep.sh` on a regular basis, so that a shutdown occurs if the specified criteria are met. So another script is required that contains a call to `sleep.sh`. This script is named `call-sleep`. By placing it into one of the _cron_ directories it can be automatically run on a regular basis. Within this script, you can add your own specific options, such as client IP addresses to be checked.
 
