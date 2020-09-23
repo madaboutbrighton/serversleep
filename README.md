@@ -13,6 +13,7 @@ Bash script to shutdown a computer if certain criteria are met:-
   - [Installation](#installation)
   - [Usage](#usage)
   - [Options](#options)
+  - [FAQ](#faq)
 
 ## Installation
 
@@ -138,8 +139,8 @@ Increase the amount of information printed to the terminal.
 
 ### Who do i need the `call-sleep` script as well as `sleep.sh`?
 
-You can call `sleep.sh` directly from the commandline. However, it is highly likely that you would want to call `sleep.sh` on a regualr basis, so that a shutdown occurs if the specified criteria are met. So another script is required that contains a call to `sleep.sh`. This script is named `call-sleep`. By placing it into one of the __cron__ directories it can be automatically run on a regular basis. Within this script, you can add your own specific options, such as client IP addresses to be checked.
+You can call `sleep.sh` directly from the commandline. However, it is highly likely that you would want to call `sleep.sh` on a regualr basis, so that a shutdown occurs if the specified criteria are met. So another script is required that contains a call to `sleep.sh`. This script is named `call-sleep`. By placing it into one of the _cron_ directories it can be automatically run on a regular basis. Within this script, you can add your own specific options, such as client IP addresses to be checked.
 
-### Why do you recomend only giving __root__ read, write and excecute permissions on `call-sleep`?
+### Why do you recomend only giving _root_ read, write and excecute permissions on `call-sleep`?
 
 The options within `call-sleep` could contain IP addesses and passwords. For securtiy reasons it makes sense to restrict access to this script.
