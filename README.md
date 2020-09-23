@@ -16,11 +16,28 @@ Bash script to shutdown a computer if certain criteria are met:-
 
 ## Installation
 
-To install it right away for all UNIX users:-
+### Main sleep script
+
+Download `sleep.sh` into `/usr/local/bin` so that it can be run from anywhere:-
 
 ```bash
 sudo wget https://raw.githubusercontent.com/madaboutbrighton/sleep/master/sleep.sh -O /usr/local/bin/sleep.sh
 sudo chmod a+rx /usr/local/bin/sleep.sh
+```
+
+### Calling script
+
+Download `call-sleep.sh` into `/etc/cron.hourly` so that it can be run automatically every hour:-
+
+```bash
+sudo wget https://raw.githubusercontent.com/madaboutbrighton/sleep/master/call-sleep.sh -O /etc/cron.hourly/call-sleep.sh
+sudo chmod u=rwx /etc/cron.hourly/call-sleep.sh
+```
+
+You can then customise `call-sleep.sh` based on your own options:
+
+```bash
+sudo nano /etc/cron.hourly/call-sleep.sh
 ```
 
 ## Usage
