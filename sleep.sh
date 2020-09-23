@@ -134,7 +134,6 @@ get_options() {
     message "[SETTINGS]"
     message "is_dry_run=${is_dry_run}"
     message "is_verbose=${is_verbose}"
-    message "notify=${notify}"
     message "safe_margin_startup=${safe_margin_startup} seconds"
     message "safe_margin_shutdown=${safe_margin_shutdown} seconds"
     message "rtc_folder=${rtc_folder}"
@@ -186,7 +185,7 @@ message() {
 # Sends a message to a service.
 # Arguments: 
 #   The name of the sender, a string.
-#   The reciever, a string.
+#   The receiver, a string.
 #   The message to be displayed, a string.
 # Example:
 #   notify "myscript" "https://hooks.slack.com/services/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" "The script is complete!"
@@ -196,7 +195,7 @@ notify() {
   local -r TO="${2}"
   local -r MESSAGE="${3}"
 
-  # Check if the reciever is a Slack Webhook URL.
+  # Check if the receiver is a Slack Webhook URL.
   if [[ $TO =~ "hooks.slack.com" ]]; then
      $(notify_slack "${FROM}" "${TO}" "${MESSAGE}" &> /dev/null)
   fi
@@ -296,7 +295,7 @@ check_clients() {
 #######################################
 # Checks whether any processes are running.
 # Arguments:
-#   The names of the processes to be checked, a space seperated string. Case insensitive.
+#   The names of the processes to be checked, a space separated string. Case insensitive.
 # Returns:
 #   The total number of processes found to be running.
 # Example:
@@ -318,7 +317,7 @@ check_processes() {
       process=$(trim "${process}")
             
       if [ ! -z "${process}" ]; then
-        # Check for the runnning process. Case insensitive. 
+        # Check for the running process. Case insensitive. 
         counter=($(ps -A | grep -iE "(^|\s)${process}($|\s)" | wc -l))
         if [ $counter -gt 0 ]; then
           # Matching processes found, so print the process name and increment the counter.
@@ -352,8 +351,8 @@ check_processes() {
 # Checks whether any Sony TVs are awake by querying their power status.
 # The TVs are not simply pinged, as they may respond even when on stand-by.
 # Arguments:
-#   The TV IP addresses to be checked, a space seperated string.
-#   The pre-shared key (PSK) or password of the tv, a string.
+#   The TV IP addresses to be checked, a space separated string.
+#   The pre-shared key (PSK) or password of the TV, a string.
 # Returns:
 #   The total number of TVs found to be awake.
 # Example:
@@ -450,7 +449,7 @@ check_users() {
 # Checks for torrents.
 # Arguments:
 #   The type of the torrent client, a string. Currently only supports "transmission".
-#   The torrent client username, a string.
+#   The torrent client user name, a string.
 #   The torrent client password, a string.
 #   The torrent level, a string. Currently only supports "active" and "active_downloads".
 #     - active - includes torrents being downloaded and seeded.
@@ -515,9 +514,9 @@ check_torrents() {
 # Checks for current and future tv tuner activity.
 # If planned activity is found, then a timer is set to wake up the computer.
 # Arguments:
-#   The type of the tv tuner, a string. Currently only supports "tvheadend".
-#   The tv tuner username, a string.
-#   The tv tuner password, a string.
+#   The type of the TV tuner, a string. Currently only supports "tvheadend".
+#   The TV tuner user name, a string.
+#   The TV tuner password, a string.
 #   Minimum time in seconds needed to start-up the computer properly, an integer.
 #   Minimum time in seconds needed for consecutive shutdown AND start-up, an integer.
 #   Maximum time in hours not to wake-up for updating EPG.
@@ -598,7 +597,7 @@ check_tv_tuner() {
       fi
     fi
       
-    # Print a useful message depending upon the activity of the tv tuner.
+    # Print a useful message depending upon the activity of the TV tuner.
     case $is_active in
     1)
       text="TV tuner is active or soon to be active."
@@ -651,8 +650,7 @@ main() {
     sleep 10s
     sudo shutdown -h now
   fi
-  
-  #echo "Total=${total}"
+
 }
 
 main "$@"
