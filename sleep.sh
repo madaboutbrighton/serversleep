@@ -1,19 +1,19 @@
 #!/bin/bash
 #
 #------------------------------------------------------------------------------
-# File:         serversleep
+# File:         sleep
 #
-# Location:     /usr/local/bin/serversleep
+# Location:     /usr/local/bin/sleep.sh
 #
 # Description:  Shuts down a computer if certain criteria are met:-
 #                 - None of the listed clients are active.
 #                 - None of the listed processes are active.
 #                 - None of the listed Sony TVs are active.
-#                 - No users logged-on.
+#                 - No users are logged-on.
 #                 - No torrents are active, such as downloading or seeding.
 #                 - No TV tuner is active, such as recording or streaming.
 #
-# Usage:        serversleep -v --clients "192.168.1.15" --processes "cp mv"
+# Usage:        sleep -v --clients "192.168.1.15" --processes "cp mv"
 #
 # Requires:     cURL
 #
@@ -25,27 +25,27 @@
 # Default options.
 is_dry_run=0
 is_verbose=0
-# Minimum time in seconds needed to start up the computer properly.
+# Minimum time in seconds needed to start-up the computer properly.
 safe_margin_startup=180
-# Minimum time in seconds needed for consecutive shutdown AND startup.
-safe_margin_shutdown=600
+# Minimum time in seconds needed to shutdown the computer properly.
+safe_margin_shutdown=300
 # RTC folder, for setting an alarm to wake the computer.
 rtc_folder="/sys/class/rtc/rtc0"
 clients=""
 processes="cp mv rsync scp"
-# Sony TV settings
+# Sony TV settings.
 sony_tvs=""
 sony_tv_auth_psk=""
-# Torrent software settings
+# Torrent software settings.
 torrent_type=""
 torrent_level=""
 torrent_user=""
 torrent_password=""
-# TV Tuner software settings
+# TV Tuner software settings.
 tv_tuner_type=""
-tv_tuner_login=""
+tv_tuner_user=""
 tv_tuner_password=""
-# Maximum time in hours not to wake up for updating EPG
+# Maximum time in hours not to wake up for updating EPG.
 tv_tuner_epg_hours=48
 
 notify=""
@@ -53,8 +53,7 @@ notify=""
 #######################################
 # Sets the commandline arguments as global variables.
 # Globals:
-#   is_dry_run, is_recursive, is_verbose, is_move, 
-#   path_source, path_dest, notify
+#   is_dry_run, is_verbose, clients, etc...
 # Arguments:
 #   The commandline arguments, a string.
 # Example:
@@ -101,8 +100,8 @@ get_options() {
           tv-tuner-type)
             tv_tuner_type="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
             ;;
-          tv-tuner-login)
-            tv_tuner_login="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+          tv-tuner-user)
+            tv_tuner_user="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
             ;;
           tv-tuner-password)
             tv_tuner_password="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
@@ -135,7 +134,6 @@ get_options() {
     message "[SETTINGS]"
     message "is_dry_run=${is_dry_run}"
     message "is_verbose=${is_verbose}"
-    message "notify=${notify}"
     message "safe_margin_startup=${safe_margin_startup} seconds"
     message "safe_margin_shutdown=${safe_margin_shutdown} seconds"
     message "rtc_folder=${rtc_folder}"
@@ -151,7 +149,7 @@ get_options() {
     message "torrent_level=${torrent_level}"
     message "[TV TUNER]"
     message "tv_tuner_type=${tv_tuner_type}"
-    message "tv_tuner_login=${tv_tuner_login}"
+    message "tv_tuner_user=${tv_tuner_user}"
     message "tv_tuner_password=${tv_tuner_password}"
     message "tv_tuner_epg_hours=${tv_tuner_epg_hours}\n"
   fi
@@ -187,7 +185,7 @@ message() {
 # Sends a message to a service.
 # Arguments: 
 #   The name of the sender, a string.
-#   The reciever, a string.
+#   The receiver, a string.
 #   The message to be displayed, a string.
 # Example:
 #   notify "myscript" "https://hooks.slack.com/services/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" "The script is complete!"
@@ -197,7 +195,7 @@ notify() {
   local -r TO="${2}"
   local -r MESSAGE="${3}"
 
-  # Check if the reciever is a Slack Webhook URL.
+  # Check if the receiver is a Slack Webhook URL.
   if [[ $TO =~ "hooks.slack.com" ]]; then
      $(notify_slack "${FROM}" "${TO}" "${MESSAGE}" &> /dev/null)
   fi
@@ -297,7 +295,7 @@ check_clients() {
 #######################################
 # Checks whether any processes are running.
 # Arguments:
-#   The names of the processes to be checked, a space seperated string. Case insensitive.
+#   The names of the processes to be checked, a space separated string. Case insensitive.
 # Returns:
 #   The total number of processes found to be running.
 # Example:
@@ -319,7 +317,7 @@ check_processes() {
       process=$(trim "${process}")
             
       if [ ! -z "${process}" ]; then
-        # Check for the runnning process. Case insensitive. 
+        # Check for the running process. Case insensitive. 
         counter=($(ps -A | grep -iE "(^|\s)${process}($|\s)" | wc -l))
         if [ $counter -gt 0 ]; then
           # Matching processes found, so print the process name and increment the counter.
@@ -353,8 +351,8 @@ check_processes() {
 # Checks whether any Sony TVs are awake by querying their power status.
 # The TVs are not simply pinged, as they may respond even when on stand-by.
 # Arguments:
-#   The TV IP addresses to be checked, a space seperated string.
-#   The pre-shared key (PSK) or password of the tv, a string.
+#   The TV IP addresses to be checked, a space separated string.
+#   The pre-shared key (PSK) or password of the TV, a string.
 # Returns:
 #   The total number of TVs found to be awake.
 # Example:
@@ -451,7 +449,7 @@ check_users() {
 # Checks for torrents.
 # Arguments:
 #   The type of the torrent client, a string. Currently only supports "transmission".
-#   The torrent client username, a string.
+#   The torrent client user name, a string.
 #   The torrent client password, a string.
 #   The torrent level, a string. Currently only supports "active" and "active_downloads".
 #     - active - includes torrents being downloaded and seeded.
@@ -516,9 +514,9 @@ check_torrents() {
 # Checks for current and future tv tuner activity.
 # If planned activity is found, then a timer is set to wake up the computer.
 # Arguments:
-#   The type of the tv tuner, a string. Currently only supports "tvheadend".
-#   The tv tuner username, a string.
-#   The tv tuner password, a string.
+#   The type of the TV tuner, a string. Currently only supports "tvheadend".
+#   The TV tuner user name, a string.
+#   The TV tuner password, a string.
 #   Minimum time in seconds needed to start-up the computer properly, an integer.
 #   Minimum time in seconds needed for consecutive shutdown AND start-up, an integer.
 #   Maximum time in hours not to wake-up for updating EPG.
@@ -526,7 +524,7 @@ check_torrents() {
 # Returns:
 #   Whether there is current activity, an integer. 
 # Example:
-#   check_tv_tuner "tvheadend" "my_username" "my_password" 180 600
+#   check_tv_tuner "tvheadend" "my_username" "my_password" 180 300
 #######################################
 check_tv_tuner() {
   local -r TUNER_TYPE="${1}"
@@ -534,6 +532,7 @@ check_tv_tuner() {
   local -r TUNER_PASSWORD="${3}"
   local -r SAFE_MARGIN_STARTUP="${4}"
   local -r SAFE_MARGIN_SHUTDOWN="${5}"
+  local -r SAFE_MARGIN_REBOOT=$((SAFE_MARGIN_STARTUP+SAFE_MARGIN_SHUTDOWN))
   local -r EPG_HOURS="${6}"
   local -r RTC_FOLDER="${7}"
   local text=""
@@ -577,7 +576,7 @@ check_tv_tuner() {
       local wake_after_secs=$((wake_after_min*60))
 
       # Check safe margin shutdown.
-      if [[ $SAFE_MARGIN_SHUTDOWN -gt $wake_after_secs ]]; then
+      if [[ $SAFE_MARGIN_REBOOT -gt $wake_after_secs ]]; then
         # Future event is going to happen before the computer could safely shutdown.
         is_active=1
       fi
@@ -598,7 +597,7 @@ check_tv_tuner() {
       fi
     fi
       
-    # Print a useful message depending upon the activity of the tv tuner.
+    # Print a useful message depending upon the activity of the TV tuner.
     case $is_active in
     1)
       text="TV tuner is active or soon to be active."
@@ -648,12 +647,10 @@ main() {
 
   if [ "${do_shutdown}" -eq 1 ]; then
     message "I'm really shutting down now!!!!"
-    
     sleep 10s
     sudo shutdown -h now
   fi
-  
-  #echo "Total=${total}"
+
 }
 
 main "$@"
