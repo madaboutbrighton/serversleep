@@ -8,6 +8,21 @@ Bash script to shutdown a computer if certain criteria are met:-
   - No torrents are active, such as downloading or seeding.
   - No TV tuner is active, such as recording or streaming.
 
+
+# Contents
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Options](#options)
+
+# Installation
+
+To install it right away for all UNIX users:-
+
+```bash
+sudo wget https://raw.githubusercontent.com/madaboutbrighton/sleep/master/sleep.sh -O /usr/local/bin/sleep.sh
+sudo chmod a+rx /usr/local/bin/sleep.sh
+```
+
 ## Usage
 
 ```bash
