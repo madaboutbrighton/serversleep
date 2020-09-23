@@ -9,12 +9,12 @@ Bash script to shutdown a computer if certain criteria are met:-
   - No TV tuner is active, such as recording or streaming.
 
 
-# Contents
+## Contents
   - [Installation](#installation)
   - [Usage](#usage)
   - [Options](#options)
 
-# Installation
+## Installation
 
 To install it right away for all UNIX users:-
 
